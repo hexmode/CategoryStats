@@ -15,7 +15,6 @@ class CategoryStats extends SpecialPage
 {
 	function CategoryStats() {
 		parent::__construct("CategoryStats");
-		wfLoadExtensionMessages( 'CategoryStats' );
 	}
 
 	function execute( $par ) {
