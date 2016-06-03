@@ -42,7 +42,7 @@ class CategoryStats extends SpecialPage
     global $wgOut, $wgScript;
 
     $htmlstr = XML::openElement('b')
-      . 'This page will display hit statistics for pages in a selected category'
+      . 'This page will display hit statistics for the 20 most-viewed pages in a selected category'
       . XML::closeElement('b');
 
     $selected = false;
@@ -60,7 +60,7 @@ class CategoryStats extends SpecialPage
     $htmlstr .= XML::openElement('form',
       array(
         'method' => 'post',
-        'action' => $wgScript,
+        'action' => '/wiki/Special:CategoryStats'
        )
       );
 
@@ -106,9 +106,11 @@ class CategoryStats extends SpecialPage
 
     // Select all categories where there are at least one _real_ page.
     $query = 'select page_title, page_counter from ' .
-      $dbr->tableName('categorylinks'). ' left join ' .
-      $dbr->tableName('page') . ' on cl_from = page_id where cl_to = \'' .
-      $category . '\' and page_namespace = \'0\' order by page_counter desc';
+      $dbr->tableName('hit_counter') . ' hc, ' .
+      $dbr->tableName('categorylinks'). ' cl left join ' .
+      $dbr->tableName('page') .
+           ' p on cl_from = p.page_id where cl_to = \'' .
+      $category . '\' and p.page_namespace = \'0\' order by page_counter desc limit 20';
 
     $res = $dbr->query($query);
 
