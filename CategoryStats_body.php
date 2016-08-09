@@ -60,7 +60,6 @@ class CategoryStats extends SpecialPage
     $htmlstr .= XML::openElement('form',
       array(
         'method' => 'post',
-        'action' => $wgScript,
        )
       );
 
@@ -103,14 +102,14 @@ class CategoryStats extends SpecialPage
 
     // Open the Database
     $dbr = wfGetDB(DB_SLAVE);
-
-    // Select all categories where there are at least one _real_ page.
-    $query = 'select page_title, page_counter from ' .
-      $dbr->tableName('categorylinks'). ' left join ' .
-      $dbr->tableName('page') . ' on cl_from = page_id where cl_to = \'' .
-      $category . '\' and page_namespace = \'0\' order by page_counter desc';
-
-    $res = $dbr->query($query);
+    $res = $dbr->select(
+        [ 'hc' => 'hit_counter', 'page', 'categorylinks' ],
+        [ 'page_title', 'page_counter' ],
+        [ 'cl_to' => $category, 'page_namespace' => 0,
+          'hc.page_id = page.page_id' ],
+        __METHOD__, [ 'ORDER BY' => [ 'page_counter desc' ] ],
+        [ 'categorylinks' => [ 'LEFT JOIN', [ 'cl_from = page_id' ] ] ]
+    );
 
     // Calulate the sum of all hits
     while($row = $dbr->fetchObject($res)){
