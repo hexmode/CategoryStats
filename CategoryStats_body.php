@@ -42,7 +42,7 @@ class CategoryStats extends SpecialPage
     global $wgOut, $wgScript;
 
     $htmlstr = XML::openElement('b')
-      . 'This page will display hit statistics for pages in a selected category'
+      . 'This page will display hit statistics for the 20 most-viewed pages in a selected category'
       . XML::closeElement('b');
 
     $selected = false;
